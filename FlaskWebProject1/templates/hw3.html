@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>HCI HW3-2</title>
+	</head>
+	<style type="text/css">
+			.left-box {
+			  background: white;
+			  float: left;
+			  width: 50%;
+			}
+			.right-box {
+			  background: white;
+			  float: right;
+			  width: 50%;
+			}
+			#setting-box  { position: relative; left: 10%; width: 60%; padding: 5px; border: medium double black; border-radius: 10px;}
+	</style>
+	
+	<!--num빼고 전부 block-->
+	<script type="text/javascript">
+		function Export2Doc(element, filename = ''){
+			var answer = prompt("파일 이름을 입력해주세요.", ".html");
+		    var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+		    var postHtml = "</body></html>";
+		    var html = preHtml+document.getElementById(element).innerHTML+postHtml;
+
+		    var blob = new Blob(['\ufeff', html], {
+		        type: 'application/msword'
+		    });
+		    
+		    // Specify link url
+		    var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+		    
+		    // Specify file name
+		    filename = answer?answer:'document.doc';
+		    
+		    // Create download link element
+		    var downloadLink = document.createElement("a");
+
+		    document.body.appendChild(downloadLink);
+		    
+		    if(navigator.msSaveOrOpenBlob ){
+		        navigator.msSaveOrOpenBlob(blob, filename);
+		    }else{
+		        // Create a link to the file
+		        downloadLink.href = url;
+		        
+		        // Setting the file name
+		        downloadLink.download = filename;
+		        
+		        //triggering the function
+		        downloadLink.click();
+		    }
+		    
+		    document.body.removeChild(downloadLink);
+		}
+
+		function ExportHTML(element, filename = ''){
+			var answer = prompt("파일 이름을 입력해주세요.", ".doc");
+		    var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+		    var postHtml = "</body></html>";
+		    var html = preHtml+document.getElementById(element).innerHTML+postHtml;
+
+		    var blob = new Blob(['\ufeff', html], {
+		        type: 'application/msword'
+		    });
+		    
+		    // Specify link url
+		    var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+		    
+		    // Specify file name
+		    filename = answer?answer:'document.doc';
+		    
+		    // Create download link element
+		    var downloadLink = document.createElement("a");
+
+		    document.body.appendChild(downloadLink);
+		    
+		    if(navigator.msSaveOrOpenBlob ){
+		        navigator.msSaveOrOpenBlob(blob, filename);
+		    }else{
+		        // Create a link to the file
+		        downloadLink.href = url;
+		        
+		        // Setting the file name
+		        downloadLink.download = filename;
+		        
+		        //triggering the function
+		        downloadLink.click();
+		    }
+		    document.body.removeChild(downloadLink);
+		}
+
+		function phase_change(num){
+			for(i=1;i<=3;i++){
+				if(i==num){
+					var con=document.getElementById("phase-"+num);
+					if(con.style.display=='none'){
+						con.style.display='block';
+					}
+					else{
+						con.style.display='block';
+					}
+				}
+				else{
+					var con=document.getElementById("phase-"+i);
+					con.style.display='none'
+				}
+			}
+		}
+		function info_save_phase1(){
+			var element_phase1={last:document.getElementById("last").value, middle:document.getElementById("middle").value, first:document.getElementById("first").value,mail:document.getElementById("mail").value, tel:document.getElementById("tel").value,url:document.getElementById("url").value, intro:document.getElementById("intro").value};
+			info_phase_1=element_phase1.last+" "+element_phase1.middle+" "+element_phase1.first;
+			sub_info_1=""
+			if(element_phase1.mail){
+				sub_info_1+="E-mail<br>"+element_phase1.mail;
+			}
+			if(element_phase1.tel){
+				sub_info_1+="<br><br>Tel<br>"+element_phase1.tel;
+			}
+			if(element_phase1.url){
+				sub_info_1+="<br><br>URL<br>"+element_phase1.url;
+			}
+			document.getElementById("name_value").innerHTML=info_phase_1;
+			document.getElementById("subinfo").innerHTML=sub_info_1;
+			document.getElementById("introduce").innerHTML=element_phase1.intro;
+			document.getElementById("uimage").src="image/"+document.getElementById("image").files[0].name;
+		}
+		
+		function info_save_phase2(){
+			var element_phase2={goal:document.getElementById("goal").value};
+			//education table
+			var my_tbody = document.getElementById("edutable");
+		    var rowlen=my_tbody.rows.length;
+			var eduinfo=[];	//array for edutable
+			var edu="";
+			
+			//experience table
+			var exinfo=[];
+			var exi="";
+			var my_tbody1 = document.getElementById("extable");
+		    var rowlen1=my_tbody1.rows.length;
+
+		    //skill table
+		    var skillinfo=[];
+		    var ski="";
+		    var my_tbody2=document.getElementById("sktable");
+		    var rowlen2=my_tbody2.rows.length;
+
+			for(var i=1;i<=rowlen-1;i++){
+				eduinfo=eduinfo.concat({eduschool:document.getElementById('edu'+String(i)+'School').value, edudegree:document.getElementById('edu'+String(i)+'Degree').value,edusdate:document.getElementById('edu'+String(i)+'SDate').value,eduedate:document.getElementById('edu'+String(i)+'EDate').value,edugpa:document.getElementById('edu'+String(i)+'GPA').value});
+			}
+
+			for(var k=1;k<=rowlen1-1;k++){
+				exinfo=exinfo.concat({organizaion:document.getElementById('ex'+String(k)+'Org').value, duty:document.getElementById('ex'+String(k)+'Duty').value,exsdate:document.getElementById('ex'+String(k)+'SDate').value,exedate:document.getElementById('ex'+String(k)+'EDate').value});
+			}
+
+			for(var b=1;b<=rowlen2-1;b++){
+				skillinfo=skillinfo.concat({name1:document.getElementById('sk'+String(b)+'Name').value,level:document.getElementById('sk'+String(b)+'level').value,explain:document.getElementById('sk'+String(b)+'explain').value});
+			}
+
+			for(var j=1 ;j<=rowlen-1;j++){
+				edu=edu+"<br>"+eduinfo[j-1].edudegree+", "+eduinfo[j-1].eduschool+", "+eduinfo[j-1].edusdate+" ~ "+eduinfo[j-1].eduedate+", "+eduinfo[j-1].edugpa;
+			}
+
+			for(var b=1;b<=rowlen1-1;b++){
+				exi=exi+"<br>"+exinfo[b-1].organizaion+", "+exinfo[b-1].duty+", "+exinfo[b-1].exsdate+" ~ "+exinfo[b-1].exedate;			
+			}
+
+			for(var c=1;c<=rowlen2-1;c++){
+				ski=ski+skillinfo[c-1].name1+"<br>Level: "+skillinfo[c-1].level+"<br>"+skillinfo[c-1].explain+"<br><br>";
+			}
+
+			document.getElementById("carrier").innerHTML=element_phase2.goal;
+			document.getElementById("educationinfo").innerHTML=edu;
+			document.getElementById("experienceinfo").innerHTML=exi;
+			document.getElementById("skillinfo").innerHTML=ski;
+		}
+
+		function add_row() {
+		    var my_tbody = document.getElementById("edutable");
+		    var rowlen=my_tbody.rows.length;
+		    // var row = my_tbody.insertRow(0); // 상단에 추가
+		    var row = my_tbody.insertRow( my_tbody.rows.length ); // 하단에 추가
+		    var cell1 = row.insertCell(0);
+		    var cell2 = row.insertCell(1);
+		    var cell3 = row.insertCell(2);
+		    var cell4 = row.insertCell(3);
+		    var cell5 = row.insertCell(4);
+		    
+		    cell1.innerHTML = '<input type="text" id="edu'+String(rowlen)+'School">';
+		    cell2.innerHTML = '<input type="text" id="edu'+String(rowlen)+'Degree">';
+		    cell3.innerHTML='<input type="date" id="edu'+String(rowlen)+'SDate"> ~';
+		    cell4.innerHTML='<input type="date" id="edu'+String(rowlen)+'EDate">';
+		    cell5.innerHTML='<input type="text" id="edu'+String(rowlen)+'GPA">';
+		}
+		function delete_row() {
+			var my_tbody = document.getElementById('edutable');
+			if (my_tbody.rows.length < 3) return;
+			// my_tbody.deleteRow(0); // 상단부터 삭제
+			my_tbody.deleteRow( my_tbody.rows.length-1 ); // 하단부터 삭제
+		}
+
+		function exadd_row(){
+			var my_tbody = document.getElementById("extable");
+		    var rowlen=my_tbody.rows.length;
+		    // var row = my_tbody.insertRow(0); // 상단에 추가
+		    var row = my_tbody.insertRow( my_tbody.rows.length ); // 하단에 추가
+		    var cell1 = row.insertCell(0);
+		    var cell2 = row.insertCell(1);
+		    var cell3 = row.insertCell(2);
+		    var cell4 = row.insertCell(3);
+		    var cell5 = row.insertCell(4);
+		    
+		    cell1.innerHTML = '<input type="text" id="ex'+String(rowlen)+'Org">';
+		    cell2.innerHTML = '<input type="text" id="ex'+String(rowlen)+'Duty">';
+		    cell3.innerHTML='<input type="date" id="ex'+String(rowlen)+'SDate"> ~';
+		    cell4.innerHTML='<input type="date" id="ex'+String(rowlen)+'EDate">';
+		    //cell5.innerHTML='<input type="text" id="edu'+String(rowlen)+'GPA">';
+		}
+
+		function exdelete_row() {
+			var my_tbody = document.getElementById('extable');
+			if (my_tbody.rows.length < 3) return;
+			// my_tbody.deleteRow(0); // 상단부터 삭제
+			my_tbody.deleteRow( my_tbody.rows.length-1 ); // 하단부터 삭제
+		}
+
+		function skadd_row(){
+			var my_tbody = document.getElementById("sktable");
+		    var rowlen=my_tbody.rows.length;
+		    // var row = my_tbody.insertRow(0); // 상단에 추가
+		    var row = my_tbody.insertRow( my_tbody.rows.length ); // 하단에 추가
+		    var cell1 = row.insertCell(0);
+		    var cell2 = row.insertCell(1);
+		    var cell3 = row.insertCell(2);
+
+		    cell1.innerHTML = '<input type="text" id="sk'+String(rowlen)+'Name">';
+		    cell3.innerHTML = '<textarea id="sk'+String(rowlen)+'explain" cols="50" rows="2" placeholder="some sentences"></textarea>';
+		    cell2.innerHTML='<td> <select name="sklevel" id="sk'+String(rowlen)+'level" size="1""><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></td>';
+		    //cell5.innerHTML='<input type="text" id="edu'+String(rowlen)+'GPA">';
+		}
+
+		function skdelete_row() {
+			var my_tbody = document.getElementById('sktable');
+			if (my_tbody.rows.length < 3) return;
+			// my_tbody.deleteRow(0); // 상단부터 삭제
+			my_tbody.deleteRow( my_tbody.rows.length-1 ); // 하단부터 삭제
+		}
+
+		function theme_color(){
+			var x=document.getElementById("boxcolor").value;
+			document.getElementById("Theme1").style.backgroundColor=x;
+		}
+		
+		function thtext_color(){
+			var x=document.getElementById("thtextcolor").value;
+			document.getElementById("Theme2").style.color=x;
+			document.getElementById("Theme3").style.color=x;
+			document.getElementById("Theme4").style.color=x;
+			document.getElementById("Theme5").style.color=x;
+		}
+		
+		function font_color(){
+			var x=document.getElementById("fontcolor").value;
+			document.getElementById("name_value").style.color=x;
+			document.getElementById("subinfo").style.color=x;
+			document.getElementById("carrier").style.color=x;
+			document.getElementById("skillinfo").style.color=x;
+			document.getElementById("educationinfo").style.color=x;
+			document.getElementById("experienceinfo").style.color=x;
+		}
+
+		
+		function font_size(){
+			var x=document.getElementById("fsize").value;
+			document.getElementById("Theme2").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("Theme3").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("Theme4").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("Theme5").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("name_value").style.fontSize=String(10+parseInt(x))+"px";
+			document.getElementById("subinfo").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("carrier").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("skillinfo").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("educationinfo").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("experienceinfo").style.fontSize=String(15+parseInt(x))+"px";
+			document.getElementById("name_value").style.fontSize=String(40+parseInt(x))+"px";
+		}
+
+		function generate(){
+			var result=document.getElementById("result");
+			document.getElementById("leftbox").style.display='none';
+			document.getElementById("rightbox").style.display='none';
+			final=result.innerHTML;
+			document.getElementById("final").innerHTML=final;
+			document.getElementById("final").style.width='900px';
+			document.getElementById("final").style.margin='auto';
+			document.getElementById("final").style.display='block';
+			document.getElementById("extract").style.width='900px';
+			document.getElementById("extract").style.display='block';
+		}
+
+		function previous(){
+			document.getElementById("final").style.display='none';
+			document.getElementById("extract").style.display='none';
+			document.getElementById("leftbox").style.display='block';
+			document.getElementById("rightbox").style.display='block';
+		}
+
+	</script>
+
+	<body>
+		Change phase button(If you want to back to the previous phase):<br>
+		<div id="leftbox" class='left-box'>
+			<input type="button" value="Phase 1: Basic information" onclick="phase_change('1')">
+			<input type="button" value="Phase 2: Experiences  " onclick="phase_change('2')">
+			<input type="button" value="Phase 3: Resume style  " onclick="phase_change('3')">
+			
+			<form method="get" action="">
+				<div id="phase-1" class="phase-1" style="display: block;">
+					<table frame=void style="margin: auto;">
+						<tr>
+							<th colspan="2">[Name]</th>
+						</tr>
+						<tr>
+							<td>Your Last name</td>
+							<td><input type="text" id="last" name="last"/></td>
+						</tr>
+						
+						<tr>
+							<td>Your Middle name(optional)
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td><input type="text" id="middle" name="middle"/></td>
+						</th>
+						
+						<tr>
+							<td>Your First name</td>
+							<td><input type="text" id="first" name="first"/></td>
+						</tr>
+						<tr>
+							<th colspan="2">[Contact]</th>
+						</tr>
+						<tr>
+							<td>E-mail</td>
+							<td><input type="email" id="mail" placeholder="****@****.***"></td>
+						</tr>
+						
+						<tr>
+							<td>Tel(optional)</td>
+							<td><input type="tel" id="tel" placeholder="***-****-****"></td>
+						</tr>
+						
+						<tr>
+							<td>URL(optional)</td>
+							<td><input type="url" id="url" value="http://"></td>
+						</tr>
+							<th colspan="2">[Short introduction]</th>
+						</tr>
+						<tr>
+							<td colspan="2" style="margin: auto">
+								<textarea name="intro" id="intro" cols="50" rows="2" placeholder="In one or two sentence"></textarea>
+							</td>
+						<tr>
+							<th colspan="2">[Image]</th>
+						</tr>
+						<tr>
+							<!-- return path of image-->
+							<td><input type="file" id="image" name="image"></td>
+						</tr>
+						<tr>
+							<th colspan="2"><input type="button" value="Reflect and Next" style="width: 200px;height: 150px;font-size: 20px" onclick="info_save_phase1();phase_change('2')"></th>
+						</tr>
+					</table>	
+				</div>
+
+				<div id='phase-2' class='phase-2' style="display: none;">
+					<table frame="void" style="margin: auto">
+						<tr>
+							<th colspan="2">[Career goal/objective]</th>
+						</tr>
+						<tr>
+							<td colspan="2"> 
+							<textarea name="goal" id="goal"cols="50" rows="2" placeholder="In one sentence"></textarea></td>
+						</tr>
+					</table>
+					<table style="margin: auto;">
+						<tr>
+							<th>[Education]</th>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" onclick="add_row()">Add</button>
+								<button type="button" onclick="delete_row()">Del</button>
+							</th>
+						</tr>
+						<tr>
+							<td colspan="2" id="educoncret">
+								<table id="edutable" frame="border"style="border: 1px solid black;">
+									<tr><th>School</th><th>Degree</th><th colspan="2">Date</th><th>GPA</th></tr>
+									<tr id="edu1">
+										<td><input type="text" id="edu1School"></td>
+										<td><input type="text" id="edu1Degree"></td>
+										<td><input type="date" id="edu1SDate"> ~</td>
+										<td><input type="date" id="edu1EDate"></td>
+										<td><input type="text" id="edu1GPA"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th colspan="2">[Experience]</th>		
+						</tr>
+						<tr>
+							<th>
+								<button type="button" onclick="exadd_row()">Add</button>
+								<button type="button" onclick="exdelete_row()">Del</button>
+							</th>
+						</tr>						
+						<tr>
+							<td colspan="2" id="exconcret">
+								<table id="extable" frame="border"style="border: 1px solid black; margin: auto;">
+									<tr><th>Organization</th><th>Duty</th><th colspan="2">Date</th></tr>
+									<tr id="edu1">
+										<td><input type="text" id="ex1Org"></td>
+										<td><input type="text" id="ex1Duty"></td>
+										<td><input type="date" id="ex1SDate"> ~</td>
+										<td><input type="date" id="ex1EDate"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th colspan="2">[Skills]</th>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" onclick="skadd_row()">Add</button>
+								<button type="button" onclick="skdelete_row()">Del</button>
+							</th>
+						</tr>		
+						<tr>
+							<td colspan="2" id="skconcret">
+								<table id="sktable" frame="border"style="border: 1px solid black; margin: auto;">
+									<tr><th>Name</th><th>Level</th><th colspan="2">Explanation</th></tr>
+									<tr id="edu1">
+										<td><input type="text" id="sk1Name"></td>
+										<td> <select name="sklevel" id="sk1level" size="1"">
+											<option value="1" selected>1</option>
+											<option value="2">2</option>
+											<option value="3">3</option>
+											<option value="4">4</option>
+											<option value="5">5</option>
+										</select></td>
+										<td><textarea id="sk1explain" cols="50" rows="2" placeholder="some sentences"></textarea></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th colspan="2"><input type="button" value="Refelction and Next" style="width: 200px;height: 150px;font-size: 20px" onclick="info_save_phase2();phase_change('3')"></th>
+						</tr>
+					</table>
+					
+					<!--선택될 시 다양한 입력란 제공 -->
+				</div>
+
+				<div id='phase-3' class='phase-3' style="display: none">
+					<table frame="void" style="margin: auto">
+						<tr>
+							<td>
+								Theme Color
+							</td>
+							<td>
+								<input type="color" id="boxcolor" value="#00FFCF" onchange="theme_color()">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								Theme Text Color
+							</td>
+							<td>
+								<input type="color" id="thtextcolor" value="#000000" onchange="thtext_color()">
+							</td>
+						</tr>
+						<tr>
+							<td>Font Color</td>
+							<td>
+								<input type="color" id="fontcolor" value="#000000", onchange="font_color()">
+							</td>
+						</tr>
+						<tr>
+							<td>Font size</td>
+							<td>
+								-3<input type="range" id="fsize" min="-3" max="3" value="1" step="0.1" oninput="font_size()">+3
+							</td>
+						</tr>
+						<tr>
+							<th colspan="2"><input type="button" style="width: 200px;height: 150px;font-size: 15px" value="Save to your computer" onclick="generate()"></th>
+						</tr>
+					</table>
+				</div>
+
+			</form>
+		</div>
+	<div id="final1">
+		<div id="final" style="display: none;">
+		</div>
+	</div>
+	<div id="extract" style="display: none;margin: auto;">
+		Please put a downloaded html file with a directory 'images' which has a your image file.
+		<br>
+		<button style="margin: auto;" onclick="previous();">Previous</button>
+		<button style="margin: auto;" onclick="Export2Doc('final1');">Export as .HTML</button>
+	</div>
+
+	<div id="rightbox" class='right-box'>
+		<h1>[Preview]</h1><br>
+		<section id="result">
+			<div id="resume" style="border: 1px solid;padding: 10px;">
+				<table>
+					<tr">
+						<th><img id="uimage" src="" style="width: 200px;height: 270px;border-radius: 70px;-moz-border-radius: 70px;-khtml-border-radius: 70px;-webkit-border-radius: 70px;">
+						</th>
+						<td style="padding: 30px; text-align: center;">
+							<div id="Theme1" style="width: 600px; height: 250px;background: #00FFCF;">
+								<p id="name_value" style="font-size: 40px"></p>
+								<p id="introduce" style="font-size: 15px"></p>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<p id="subinfo" style="font-size: 10"></p><hr width=80%>
+						</td>
+						<td>
+							<p id="Theme2" style="font-weight: bold;font-size: 15px">[Carrer goal]</p><br>
+							<p id="carrier" style="font-size: 15px"></p><br>
+							<hr width=80%>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+							<p id="Theme3"style="font-weight: bold;font-size: 15px">[Skills]</p><br>
+							<p id="skillinfo" style="font-size: 15px"></p></p><hr width=80%>
+						</td>
+						<td>
+							<p id="Theme4"style="font-weight: bold;font-size: 15px">[Education]</p><br>
+							<p id="educationinfo" style="font-size: 15px"></p><br></p><hr width=80%>
+							<P id="Theme5"style="font-weight: bold;font-size: 15px">[Experience]</p><br>
+							<p id="experienceinfo" style="font-size: 15px"></p><br></p><hr width=80%>
+						</td>
+					</tr>
+				</table>		
+			</div>
+		</section>
+		</div>
+
+	</div>
+	</body>
+
+</html>
