@@ -13,3 +13,6 @@ def index():
 @app.route('/hci')
 def hci():
     return render_template('HCI.html')
+@app.rout('/hw3')
+def hw3():
+    return render_template('hw3.html')
