@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> rect drawing </title>
+</head>
+<script type="text/javascript">
+  function change(num){
+    if(num==1){
+      document.getElementById("win_form").style.display='block';
+      document.getElementById("text_form").style.display='none';
+      document.getElementById("but_form").style.display='none';
+      document.getElementById("menu_form").style.display='none';
+    }
+    else if(num==2){
+      document.getElementById("win_form").style.display='none';
+      document.getElementById("text_form").style.display='block';
+      document.getElementById("but_form").style.display='none';
+      document.getElementById("menu_form").style.display='none';
+    } 
+    else if(num==3){
+      document.getElementById("win_form").style.display='none';
+      document.getElementById("text_form").style.display='none';
+      document.getElementById("but_form").style.display='block';
+      document.getElementById("menu_form").style.display='none';
+    }
+    else if(num==4){
+      document.getElementById("win_form").style.display='none';
+      document.getElementById("text_form").style.display='none';
+      document.getElementById("but_form").style.display='none';
+      document.getElementById("menu_form").style.display='block';
+    }
+  }
+
+  function add_row(){
+      var my_tbody = document.getElementById("menu_table");
+      var rowlen=my_tbody.rows.length;
+      // var row = my_tbody.insertRow(0); // 상단에 추가
+      var row = my_tbody.insertRow( my_tbody.rows.length ); // 하단에 추가
+      var cell1 = row.insertCell(0);
+      
+      cell1.innerHTML = '<input type="text" id="i'+String(rowlen+1)+'" >';
+        //cell5.innerHTML='<input type="text" id="edu'+String(rowlen)+'GPA">';
+  }
+
+  function delete_row(){
+      var my_tbody = document.getElementById('menu_table');
+      if (my_tbody.rows.length < 2) return;
+      // my_tbody.deleteRow(0); // 상단부터 삭제
+      my_tbody.deleteRow( my_tbody.rows.length-1 ); // 하단부터 삭제
+  }
+
+</script>
+
+<body>
+  <table border="1" width="600px">
+    <tbody>
+      <tr ><th colspan="4">Control Panel</th></tr>
+      <tr>
+        <th>New Window</th>
+        <th>New Textbox</th>  
+        <th>New Button</th>
+        <th>New menu</th>
+      </tr>
+      <tr>
+        <th><input type="button" id="window" value="Click" onclick="change(1)"></th>
+        <th><input type="button" id="textbox" value="Click" onclick="change(2)"></th>
+        <th><input type="button" id="button" value="Click" onclick="change(3)"></th>
+        <th><input type="button" id="menu" value="Click" onclick="change(4)"></th>
+      </tr>
+      <tr>
+        <td colspan="4"><div id='win_form' style="display: none; margin: auto;">
+          position_X=<input type="number" id="win_X" min="0">
+          position_Y=<input type="number" id="win_Y" min="0"><br>
+          Width=<input type="number" id="win_W" min="0">
+          height=<input type="number" id="win_H" min="0"><br>
+          title=<input type="text" id=win_T>
+          box color=<input type="color" id="win_C" value="#FFFFFF"><br>
+          <input type="button" value="Create" onclick="new_window()">
+        </div>
+        
+        <div id="text_form" style="display: none;">
+          position_X=<input type="number" id="text_X" min="0">
+          position_Y=<input type="number" id="text_Y" min="0"><br>
+          Width=<input type="number" id="text_W" min="0">
+          (Height is automatically determined)<br>
+          font=<select id="text_font" size="1">
+                  <option value="Georgia" selected>Georgia</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Consolas">Consolas</option>
+                  <option value="Monaco">Monaco</option>
+                </select>
+          font_size=<input type="number" id="text_S" min="0"><br>
+          box color=<input type="color" id="text_C" value="#FFFFFF">
+          <br>text<br>
+          <textarea id="text_T" cols="50" rows="2" placeholder="put your text in this box"></textarea><br>
+          <input type="button" value="Create" onclick="new_textbox()">
+        </div>
+
+        <div id="but_form" style="display: none;">
+          width and height are automatically determined by font_size and length of label.
+          position_X=<input type="number" id="but_X" min="0">
+          position_Y=<input type="number" id="but_Y" min="0"><br>
+          label=<input type="text" id=but_T>
+          font=<select id="but_font" size="1">
+            <option value="Georgia" selected>Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Consolas">Consolas</option>
+            <option value="Monaco">Monaco</option>
+          </select><br>
+          font_size=<input type="number" id="but_S" min="0">
+          box color=<input type="color" id="but_C" value="#FFFFFF"><br>
+          <input type="button" value="Create" onclick="new_button()">
+        </div>
+
+        <div id="menu_form" style="display: none;">
+          width and height are automatically determined by font_size and length of label.
+          position_X=<input type="number" id="menu_X" min="0">
+          position_Y=<input type="number" id="menu_Y" min="0"><br>
+          title=<input type="text" id=menu_T>
+          font=<select id="menu_font" size="1">
+            <option value="Georgia" selected>Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Consolas">Consolas</option>
+            <option value="Monaco">Monaco</option>
+          </select><br>
+          font_size=<input type="number" id="menu_S" min="0"><br>
+          title color=<input type="color" id="menu_TC" value="#FFFFFF"> item color=<input type="color" id="menu_IC" value="#FFFFFF"><br>
+          item list <input type="button" value="Create" onclick="add_row()"><input type="button" value="Create" onclick="delete_row()">
+          <table id="menu_table">
+            <tr>
+              <td><input type="text" id="i1"></td>
+            </tr>
+          </table>
+           <input type="button" value="Create" onclick="new_menu()">
+        </div>
+
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <canvas id="myCanvas" width="1200" height="900"></canvas>
+<script type="text/javascript">
+  var win_arr=new Array();
+  var canvas = document.getElementById("myCanvas");
+  var context = canvas.getContext("2d");
+  
+  //Input : ID, position_x, position_y, width, height, title
+  function new_window(){
+    // Creat new object
+    x=parseInt(document.getElementById('win_X').value);
+    y=parseInt(document.getElementById('win_Y').value);
+    width=parseInt(document.getElementById('win_W').value);
+    height=parseInt(document.getElementById('win_H').value);
+    title=document.getElementById('win_T').value;
+    color=document.getElementById('win_C').value;
+    draw_window(x, y, title, width, height, color);
+  }
+
+  function draw_window(x, y, title, width, height, color){
+    context.beginPath();
+    context.rect(x, y, width, height); //window
+    context.fillStyle=color;
+    context.strokeStyle="black";
+    context.stroke();
+    context.fill();
+
+    context.beginPath();
+    context.rect(x+width-(width*0.1),y+height-(height*0.1), width*0.1, height*0.1); // Hide button
+    context.fillStyle=color;
+    context.strokeStyle="black";
+    context.stroke();
+    
+    context.beginPath();
+    context.rect(x+width-(width*0.2),y+height-(height*0.1), width*0.1, height*0.1); // Remove button
+    context.fillStyle=color;
+    context.strokeStyle="black";
+    context.stroke();
+    
+    context.beginPath();
+    context.rect(x, y, width, height*0.3); //title
+    context.fillStyle=color;
+    context.strokeStyle="black";
+    context.stroke();
+
+    context.fillStyle="black";
+    context.font=(height*0.15).toString() +'pt Times New Roman'; // Write 'Title into title window'
+    context.fillText(title, x, y+height*0.2);
+
+    context.font=(height*0.08).toString() +'pt Times New Roman'; // Write 'X'
+    context.fillText('X', x+width-width*0.2, y+height);
+
+    context.font=(height*0.08).toString() +'pt Times New Roman'; // Write '-'
+    context.fillText('-', x+width-width*0.1, y+height);    
+  }
+
+  //Input : ID, position_x, position_y, width, (label, font)
+  //calculate maximum measureText.width and draw rect with this width 
+  function new_textbox(){
+    //Parse Input
+    var sel=document.getElementById('text_font');
+    var font=sel.options[sel.selectedIndex].value;
+    x=parseInt(document.getElementById('text_X').value); //Int
+    y=parseInt(document.getElementById('text_Y').value); //Int
+    width=parseInt(document.getElementById('text_W').value); //Int
+    //font=document.getElementById('text_font').value; //String
+    size=parseInt(document.getElementById('text_S').value); //Int
+    statement=document.getElementById('text_T').value; //String
+    color=document.getElementById('text_C').value;
+    draw_textbox(x, y, width, statement, font, size, color);
+  }
+
+  function draw_textbox(x, y, width, statement, font, size, color){
+    // Initializing parameters
+    num_text_parallel=parseInt(((0.8)*width)/size); // Given width, The number of text which is into 1 parallel line
+    num_text_vertical=(statement.length/num_text_parallel)+1; // The number of vertical lines
+    height=(num_text_vertical*size);// Given width, statement, width
+
+    // Draw text box
+    context.beginPath();
+    context.rect(x, y, width, height);
+    context.fillStyle=color;
+    context.stroke();
+    context.fill();
+
+    context.fillStyle="black";
+    // Write statement, fix context.font
+    context.font=size.toString()+'pt '+font; // +font
+    for(i=0,j=0; i<=statement.length;j++){
+        context.fillText(statement.substr(i,num_text_parallel),x+width*0.1,y+size+0.1*height+size*j);
+        i=i+num_text_parallel;
+        // Next line
+    }
+  }
+
+  //Input : ID, position_x, position_y, (label, font)
+  function new_button(){
+    var sel=document.getElementById('text_font');
+    var font=sel.options[sel.selectedIndex].value;
+    x=parseInt(document.getElementById('but_X').value);
+    y=parseInt(document.getElementById('but_Y').value);
+    //width=parseInt(document.getElementById('but_W').value);
+    //height=parseInt(document.getElementById('but_H').value);
+    label=document.getElementById('but_T').value;
+    size=parseInt(document.getElementById('but_S').value);
+    color=document.getElementById('but_C').value;
+
+    context.font=size.toString()+'pt '+font;
+    metrics = context.measureText(label);
+    width=metrics.width;
+    draw_button(x, y, label, font, size, color, width);
+  }
+
+  function draw_button(x, y, label, font, size, color, width){
+    // Draw button with one-line lebel
+    context.beginPath();
+    context.rect(x, y, width+size*4, 3*size);
+    context.lineWidth = 10;
+    context.lineJoin="round";
+    context.fillStyle=color;
+    context.fill();
+    context.stroke();
+    //context.fill();
+
+    context,lineJoin="miter";
+    context.lineWidth="1";
+    context.fillStyle="black";
+    
+    // Write label into button
+    //context.font=size.toString()+'pt Times New Roman';
+    //metrics = context.measureText(label);
+    context.fillText(label, x+size*2, y + size*1.5);
+  }
+
+  //Input : ID, position_x, position_y, menu_title(Array), menu_item_list, font
+  function new_menu(){
+    var sel=document.getElementById('menu_font');
+    var font=sel.options[sel.selectedIndex].value;
+    x=parseInt(document.getElementById('menu_X').value);
+    y=parseInt(document.getElementById('menu_Y').value);
+    //width=parseInt(document.getElementById('but_W').value);
+    //height=parseInt(document.getElementById('but_H').value);
+    title=document.getElementById('menu_T').value;
+    size=parseInt(document.getElementById('menu_S').value);
+    var my_tbody=document.getElementById('menu_table');
+    var rowlen=my_tbody.rows.length;
+    var itemlist=new Array();
+    title_color=document.getElementById('menu_TC').value;
+    item_color=document.getElementById('menu_IC').value;
+    for(var i=0;i<=rowlen-1;i++){
+      itemlist.push(document.getElementById('i'+String(i+1)).value);
+    }
+    draw_menu(x,y,title,itemlist,font,size, title_color, item_color);
+  }
+
+  function draw_menu(x, y, title, itemlist, font, size,title_color, item_color){
+    // Calculate maximum width of box
+    context.font=size.toString()+'pt Times New Roman';
+    max_width=context.measureText(title).width;
+    for(i=0; i<itemlist.length;i++){
+      if(max_width<context.measureText(itemlist[i]).width){
+        max_width=context.measureText(itemlist[i]).width;
+      }
+    }
+
+    // Draw menu box
+    context.beginPath();    
+    context.rect(x, y, max_width+size*4, 2*size);
+    context.fillStyle=title_color;
+    context.stroke();
+    context.fill();
+
+    context.fillStyle="black";
+    context.fillText(title, x+size*2, y+size+1.5);
+
+    for(i=0; i<itemlist.length; i++){
+      context.beginPath();
+      context.rect(x, y+2*size*(i+1), max_width+size*4, 2*size);
+      context.fillStyle=item_color;
+      context.stroke();
+      context.fill();
+
+      context.fillStyle="black";
+      context.fillText(itemlist[i], x+size*2, y+2*size*(i+1)+size+1.5);
+    }
+    // End
+  }
+</script>
+</body>
+</html>
