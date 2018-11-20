@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Tree </title>
+</head>
+<body>
+  
+  <canvas id="myCanvas" width="1200" height="900"></canvas>
+  <script type="text/javascript">
+    var win_arr=new Array();
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+    
+    // Create tree, p : parent, c : child, n : new 
+    function tree(){
+      // field: Root node
+      this.rootNode= this.create_node('root');
+    };
+
+    // Create new node
+    tree.prototype.create_node = function(n_idNumber){
+      node= new Object();
+      // Field
+      node.idNumber=n_idNumber; // id of node : string
+      node.numberOfChildren; // # of chilren : be initialized by travelsing function
+      node.graphicElement;//=n_graphicElement;
+      node.graphicAttribute=new Object();
+
+      // Relation field
+      node.pointer=new Array(); // array of children
+      node.parent;  // idNumber of parent node 
+      return node;
+    };
+
+    // Input : idNumber of parent node
+    tree.prototype.add_node = function(p_idNumber, n_idNumber){
+      c_newNode=this.create_node(n_idNumber);
+      
+      // Searching parent node and Insert new node into this
+      p_newNode=this.search_node(this.rootNode, p_idNumber);
+      p_newNode.pointer.push(c_newNode);
+      c_newNode.parent=p_idNumber;
+      
+      return c_newNode;
+    };
+
+    // Delete exist node in tree :: Cut subtree
+    tree.prototype.delete_node = function(d_idNumber){
+      d_Node=this.search_node(this.rootNode, d_idNumber);
+
+      // Delete d_Noid in parent.pointer
+      this.search_node(this.rootNode, d_Node.parent).pointer.splice(d_Node, 1);
+      return d_Node;
+    };
+
+    // Search specific node in tree s: search
+    tree.prototype.search_node = function(s_node, s_idNumber){
+      // if s_node.idNumber is equal to s_idNumber
+      if(s_node.idNumber==s_idNumber){
+        return s_node;
+      }
+      for(var i=0; i<s_node.pointer.length; i++){
+        console.log(s_node.pointer[i].idNumber);
+        ret=this.search_node(s_node.pointer[i], s_idNumber);
+        
+        if(ret==null){
+          continue;
+        }
+        else{
+          return ret;
+        }
+      }
+    };
+
+    // Draw graphic nodes and render them on the web browser canvas
+    tree.prototype.draw_tree= function(){
+    };
+
+    var a = new tree();
+
+    function draw_window(x, y, title, width, height, color){
+      // window rectangle
+      context.beginPath();
+      context.rect(x, y, width, height); //window
+      context.fillStyle=color;
+      context.strokeStyle="black";
+      context.stroke();
+      context.fill();
+
+      // hide button rectangle
+      context.beginPath();
+      context.rect(x+width-(width*0.1),y+height-(height*0.1), width*0.1, height*0.1); // Hide button
+      context.fillStyle=color;
+      context.strokeStyle="black";
+      context.stroke();
+      
+      // remove button retangle
+      context.beginPath();
+      context.rect(x+width-(width*0.2),y+height-(height*0.1), width*0.1, height*0.1); // Remove button
+      context.fillStyle=color;
+      context.strokeStyle="black";
+      context.stroke();
+      
+      // title rectangle
+      context.beginPath();
+      context.rect(x, y, width, height*0.2); //title
+      context.fillStyle=color;
+      context.strokeStyle="black";
+      context.stroke();
+
+      // title text
+      context.fillStyle="black";
+      context.font=(height*0.10).toString() +'pt Times New Roman'; // Write 'Title into title window'
+      context.fillText(title, x, y+height*0.15);
+
+      // hide text
+      context.font=(height*0.08).toString() +'pt Times New Roman'; // Write 'X'
+      context.fillText('X', x+width-width*0.2, y+height);
+
+      // remove text
+      context.font=(height*0.08).toString() +'pt Times New Roman'; // Write '-'
+      context.fillText('-', x+width-width*0.1, y+height);    
+    }
+
+    function draw_textbox(x, y, width, statement, font, size, color){
+      // Initializing parameters
+      num_text_parallel=parseInt(((0.8)*width)/size); // Given width, The number of text which is into 1 parallel line
+      num_text_vertical=(statement.length/num_text_parallel)+1; // The number of vertical lines
+      height=(num_text_vertical*size);// Given width, statement, width
+
+      // Draw text box
+      context.beginPath();
+      context.rect(x, y, width, height);
+      context.fillStyle=color;
+      context.stroke();
+      context.fill();
+
+      context.fillStyle="black";
+      // Write statement, fix context.font
+      context.font=size.toString()+'pt '+font; // +font
+      for(i=0,j=0; i<=statement.length;j++){
+          context.fillText(statement.substr(i,num_text_parallel),x+width*0.1,y+size+0.1*height+size*j);
+          i=i+num_text_parallel;
+          // Next line
+      }
+      return height;
+    }
+
+    function draw_button(x, y, label, font, size, color, width){
+      // Draw button with one-line lebel
+      context.beginPath();
+      context.rect(x, y, width+size*4, 3*size);
+      context.lineJoin="round";
+      context.fillStyle=color;
+      context.fill();
+      context.stroke();
+      //context.fill();
+
+      context,lineJoin="miter";
+      context.lineWidth="1";
+      context.fillStyle="black";
+      
+      // Write label into button
+      //context.font=size.toString()+'pt Times New Roman';
+      //metrics = context.measureText(label);
+      context.fillText(label, x+size*2, y + size*1.5);
+    }
+
+    function draw_menu(x, y, title, itemlist, font, size, title_color, item_color){
+      // Calculate maximum width of box
+      context.font=size.toString()+'pt Times New Roman';
+      max_width=context.measureText(title).width;
+      for(i=0; i<itemlist.length;i++){
+        if(max_width<context.measureText(itemlist[i]).width){
+          max_width=context.measureText(itemlist[i]).width;
+        }
+      }
+
+      // Draw menu box
+      context.beginPath();    
+      context.rect(x, y, max_width+size*4, 2*size);
+      context.fillStyle=title_color;
+      context.stroke();
+      context.fill();
+
+      context.fillStyle="black";
+      context.fillText(title, x+size*2, y+size+1.5);
+
+      for(i=0; i<itemlist.length; i++){
+        context.beginPath();
+        context.rect(x, y+2*size*(i+1), max_width+size*4, 2*size);
+        context.fillStyle=item_color;
+        context.stroke();
+        context.fill();
+
+        context.fillStyle="black";
+        context.fillText(itemlist[i], x+size*2, y+2*size*(i+1)+size+1.5);
+      }
+    }
+
+    // render window object
+    function object_window(x, y, title, width, height, color){
+      //object number
+      objectId=a.rootNode.pointer.length;
+      
+      // add window object to root node
+      current_node=a.add_node('root','Window_Object'+String(objectId));
+      current_node.graphicElement='window';
+      current_node.graphicAttribute["x"]=x;
+      current_node.graphicAttribute["y"]=y;
+      current_node.graphicAttribute["width"]=width;
+      current_node.graphicAttribute["height"]=height;
+      current_node.graphicAttribute["color"]=color;
+      current_node.graphicAttribute["title"]=title;
+
+      draw_window(x, y, title, width, height, color);
+    }
+
+    // render menu object
+    function object_menu(parent,x, y, title, itemlist, font, size,title_color, item_color){
+      // get maximum width
+      context.font=size.toString()+'pt Times New Roman';
+      max_width=context.measureText(title).width;
+      for(i=0; i<itemlist.length;i++){
+        if(max_width<context.measureText(itemlist[i]).width){
+          max_width=context.measureText(itemlist[i]).width;
+        }
+      }
+      // object number
+      objectId=a.search_node(a.rootNode,parent).pointer.length;
+
+      // add menu object to root node
+      current_node=a.add_node(parent,'Menu_Object'+String(objectId));
+      current_node.graphicElement='menu_title';
+      current_node.graphicAttribute["x"]=x;
+      current_node.graphicAttribute["y"]=y;
+      current_node.graphicAttribute["title"]=title;
+      current_node.graphicAttribute["font"]=font;
+      current_node.graphicAttribute["size"]=size;
+      current_node.graphicAttribute["title_color"]=title_color;
+      current_node.graphicAttribute["item_color"]=item_color;
+      current_node.graphicAttribute["width"]=max_width;
+
+      // item node has item as a attribute.
+      for(i=0;i<itemlist.length;i++){
+        current_node=a.add_node('Menu_Object'+String(objectId), 'Menu_Object_item_'+String(i));
+        current_node.graphicElement='menu_item'
+        current_node.graphicAttribute["item"]=itemlist[i];
+      }
+      draw_menu(x, y, title, itemlist, font, size, title_color, item_color);
+    }
+    
+    // render textbox object
+    function object_textbox(parent, x, y, width, statement, font, size, color){
+      // object number
+      objectId=a.search_node(a.rootNode,parent).pointer.length;
+      
+      // add textbox object to window
+      current_node=a.add_node(parent,'Text_Object'+String(objectId));
+      current_node.graphicElement='textbox';
+      current_node.graphicAttribute["x"]=x;
+      current_node.graphicAttribute["y"]=y;
+      current_node.graphicAttribute["width"]=width;
+      current_node.graphicAttribute["statement"]=statement
+      current_node.graphicAttribute["font"]=font;
+      current_node.graphicAttribute["size"]=size;
+      current_node.graphicAttribute["color"]=color;
+
+      draw_textbox(x, y, width, statement, font, size, color);
+    } 
+    
+    // render button object
+    function object_button(parent, x, y, label, font, size, color){
+      // object number
+      objectId=a.search_node(a.rootNode,parent).pointer.length;
+     
+      // calculate width of button
+      context.font=size.toString()+'pt '+font;
+      metrics = context.measureText(label);
+      width=metrics.width;
+      
+      // add window object to root node
+      current_node=a.add_node(parent,'Button_Object'+String(objectId));
+      current_node.graphicElement='button';
+      current_node.graphicAttribute["x"]=x;
+      current_node.graphicAttribute["y"]=y;
+      current_node.graphicAttribute["label"]=label;
+      current_node.graphicAttribute["font"]=font;
+      current_node.graphicAttribute["size"]=size;
+      current_node.graphicAttribute["color"]=color;
+      current_node.graphicAttribute["width"]=width;
+
+      draw_button(x, y, label, font, size, color, width);
+    }
+
+    // Input : Id of start node
+    function tree_travelse(s_node, depth, numberOfSameDepth, indexOfNode){
+      //function draw_button(x, y, label, font, size, color, width)
+      var p1=draw_node(s_node, depth, numberOfSameDepth, indexOfNode);  //SHOULD BE LOCAL VARIALBE.
+      depth=depth+1
+
+      for(var i=0; i<s_node.pointer.length; i++){
+        p2=tree_travelse(s_node.pointer[i], depth, s_node.pointer.length, i);
+        //context.beginPath();
+        context.moveTo(p1["x"], (depth-1)*120+p2["height"]+10);
+        context.lineTo(p2["x"], depth*120+10);
+        context.stroke();
+      }
+      return p1;
+    }
+
+    function draw_node(node, depth, numberOfSameDepth, indexOfNode){
+      // 600 is size of node and 200 is size of empty
+      // node size
+      point=new Object();
+      x=800-((600/numberOfSameDepth)>150?150:(600/numberOfSameDepth))*((numberOfSameDepth/2-indexOfNode))+20*indexOfNode; // 400 is middle of tree window 
+      y=120*depth+10;
+      //label=node.graphicElement;
+      label=node.idNumber;
+      //for(i=0;i<node.graphicAttribute)
+      
+      point["x"]=x+75;
+      point["height"]=draw_textbox(x, y, (600/numberOfSameDepth)>150?150:(600/numberOfSameDepth), label,'Times New Roman', 9, 'white');
+      return point;
+    }
+    
+    // ex) construct tree and render graphic elements
+    // root - window
+    object_window(100,100,'gyuhyeon',300,300,'yellow');
+    // window - menu
+    object_menu('Window_Object0',100,200,'hello sim',['hi','hi','aa','hihi'],'times new roman', 13,'red', 'pink');
+    // window - button
+    object_button('Window_Object0', 105, 165, 'A', 'times new roman', 10, 'white');
+    object_button('Window_Object0', 165, 165, 'B', 'times new roman', 10, 'white');
+    // window - textbox
+    object_textbox('Window_Object0',230,160,150,'aaaaaaaaaaaaaaaaaaaaaaa','times new roman',25,'green');
+    // Draw tree
+    tree_travelse(a.rootNode.pointer[0], 0, 1, 0);
+  </script>
+</body>
+</html>
