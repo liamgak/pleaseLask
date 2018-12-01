@@ -25,3 +25,7 @@ def hw4():
 @app.route('/hw4-2')
 def hw4_2():
     return render_template('hw4_2.html')
+
+@app.route('/hw4-3')
+def hw4_3():
+    return render_template('hw_4_1_3.html')
