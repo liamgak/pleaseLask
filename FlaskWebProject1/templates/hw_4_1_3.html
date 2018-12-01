@@ -95,7 +95,7 @@
         redraw();
     }
 
-    canvas.addEventListener('mousemove', function(evt) {
+    canvas.addEventListener('click', function(evt) {
       var mousePos = getMousePos(canvas, evt);
       var message = 'selected GUI object by move-to-focus: '+ selectGUI(mousePos.x, mousePos.y);
       writeMessage(canvas, message);
