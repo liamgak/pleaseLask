@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Tree </title>
+</head>
+<body>
+  
+  <canvas id="myCanvas" width="1200" height="900"></canvas>
+  
+  <script type="text/javascript">
+    var win_arr=new Array();
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+    stack_GUI=new Array();
+    queue_levelorder=new Array();
+    // Create tree, p : parent, c : child, n : new 
+    function tree(){
+      // field: Root node
+      this.rootNode= this.create_node('root');
+    };
+
+    // Create new node
+    tree.prototype.create_node = function(n_idNumber){
+      node= new Object();
+      // Field
+      node.idNumber=n_idNumber; // id of node : string
+      node.numberOfChildren; // # of chilren : be initialized by travelsing function
+      node.graphicElement;//=n_graphicElement;
+      node.graphicAttribute=new Object();
+
+      // Relation field
+      node.pointer=new Array(); // array of children
+      node.parent;  // idNumber of parent node 
+      return node;
+    };
+
+    // Input : idNumber of parent node
+    tree.prototype.add_node = function(p_idNumber, n_idNumber){
+      c_newNode=this.create_node(n_idNumber);
+      
+      // Searching parent node and Insert new node into this
+      p_newNode=this.search_node(this.rootNode, p_idNumber);
+      p_newNode.pointer.push(c_newNode);
+      c_newNode.parent=p_idNumber;
+      
+      return c_newNode;
+    };
+
+    // Delete exist node in tree :: Cut subtree
+    tree.prototype.delete_node = function(d_idNumber){
+      d_Node=this.search_node(this.rootNode, d_idNumber);
+
+      // Delete d_Noid in parent.pointer
+      this.search_node(this.rootNode, d_Node.parent).pointer.splice(d_Node, 1);
+      return d_Node;
+    };
+
+    // Search specific node in tree s: search
+    tree.prototype.search_node = function(s_node, s_idNumber){
+      // if s_node.idNumber is equal to s_idNumber
+      if(s_node.idNumber==s_idNumber){
+        return s_node;
+      }
+      for(var i=0; i<s_node.pointer.length; i++){
+        console.log(s_node.pointer[i].idNumber);
+        ret=this.search_node(s_node.pointer[i], s_idNumber);
+        
+        if(ret==null){
+          continue;
+        }
+        else{
+          return ret;
+        }
+      }
+    };
+
+    var a = new tree();
+
+    // Get current mouse location
+    function getMousePos(canvas, evt) {
+      var rect = canvas.getBoundingClientRect();
+      // Return Object
+      return {
+          x: (evt.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
+          y: (evt.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
+      };
+    }
+
+    function writeMessage(canvas, message) {
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.font = '18pt Calibri';
+        context.fillStyle = 'black';
+        context.fillText(message, 10, 25);
+        redraw();
+    }
+
+    canvas.addEventListener('mousemove', function(evt) {
+      var mousePos = getMousePos(canvas, evt);
+      var message = 'selected GUI object by move-to-focus: '+ selectGUI(mousePos.x, mousePos.y);
+      writeMessage(canvas, message);
+    }, false);
+
+    //p_node: ID of parent node, n_node: ID of new node
+    function drawTriangle(x, y, width, height, p_node, n_node){
+      context.beginPath();
+      context.moveTo(x+width/2, y);
+      context.lineTo(x, y+height);
+      context.lineTo(x+width, y+height);
+      context.closePath();
+
+      // the outline
+      context.lineWidth = 3;
+      context.strokeStyle = '#666666';
+      context.stroke();
+
+      context.fillStyle = "#FFCC00";
+      context.fill();
+    }
+
+    function drawRect(x, y, width, height, p_node, n_node){
+      context.beginPath();
+      context.rect(x, y, width, height); //window
+      context.closePath();
+
+      // the outline
+      context.lineWidth = 3;
+      context.strokeStyle="black";
+      context.stroke();
+      
+      context.fillStyle='green';
+      context.fill();
+    }
+
+    // r: radius of circle, x: center of circle, y: center of circle
+    function drawCircle(x, y, r, p_node, n_node){
+      context.beginPath();
+      context.arc(x,y,r,0*Math.PI,2*Math.PI);
+      context.lineWidth = 3;
+      context.strokeStyle="black";
+      context.stroke();
+
+      context.fillStyle = 'red';
+      context.fill();
+    }
+
+    function redraw(){
+      //draw GUI
+      drawRect(600, 200, 400, 400, 'root', 'rect1'); //depth: 1
+      drawTriangle(630,250, 100, 100, 'rect1', 'tri2');  //depth: 2
+      drawCircle(875, 450, 120, 'rect1', 'cir2'); //depth: 2
+      drawTriangle(815, 390, 60, 60, 'cir2','tri3'); //depth: 3
+      drawTriangle(875, 450, 60, 60, 'cir2','tri3_2'); //depth: 3
+      drawRect(300, 500, 500, 400, 'cir2', 'rect3'); //depth: 3
+      drawCircle(550, 700, 150, 'rect3', 'cir4'); //depth: 4
+    }
+
+    // Check wheter it is leaf node
+    // input: node
+    function isLeaf(node){
+      // if node.pointer.length is 0, then it is leafNode (if The number of children is 0)
+      return(node.pointer.length==0);
+    }
+
+    // struct stack for GUI: stack_GUI
+    // input: rootNode in Tree : 'rect1'
+    function levelorderTraversing(node){
+      queue_levelorder.push(node);
+      while(queue_levelorder.length!=0){
+        node=queue_levelorder[0];
+        for(i=0; i<node.pointer.length; i++){
+          queue_levelorder.push(node.pointer[i]); 
+        }
+        // Delete first element in array
+        stack_GUI.push(queue_levelorder[0]);
+        queue_levelorder.shift();
+      }
+    }
+
+
+    function matchLocation(x, y, node){
+      if(x>=node.graphicAttribute["x"] && y>=node.graphicAttribute["y"] && x<=node.graphicAttribute["x"]+node.graphicAttribute["width"] && y<=node.graphicAttribute["y"]+node.graphicAttribute["height"]){
+        return true;
+      }
+      return false;
+    }
+
+    // input: current mouse location
+    function selectGUI(x, y){
+      for(i=stack_GUI.length-1; i>0; i--){
+        current_node=stack_GUI[i];
+        if(matchLocation(x, y, current_node)){
+          return current_node.idNumber;      
+        }
+      }
+    }
+
+    //Main Logic
+    // Add object
+    /*
+      drawRect(600, 200, 400, 400, 'root', 'rect1'); //depth: 1
+      drawTriangle(630,250, 100, 100, 'rect1', 'tri2');  //depth: 2
+      drawCircle(875, 450, 120, 'rect1', 'cir2'); //depth: 2
+      drawTriangle(815, 390, 60, 60, 'cir2','tri3'); //depth: 3
+      drawTriangle(875, 450, 60, 60, 'cir2','tri3_2'); //depth: 3
+      drawRect(300, 500, 500, 400, 'cir2', 'rect3'); //depth: 3
+      drawCircle(550, 700, 150, 'rect3', 'cir4'); //depth: 4
+    */
+    current_node=a.add_node('root', 'Object_rectangle_1_1 (depth: 1)');
+    current_node.graphicAttribute["depth"]=1;
+    current_node.graphicAttribute["x"]=600;
+    current_node.graphicAttribute["y"]=200;
+    current_node.graphicAttribute["width"]=400;
+    current_node.graphicAttribute["height"]=400;
+    
+    current_node=a.add_node('Object_rectangle_1_1 (depth: 1)', 'Object_triangle_2_1 (depth: 2)');
+    current_node.graphicAttribute["depth"]=2;
+    current_node.graphicAttribute["x"]=630;
+    current_node.graphicAttribute["y"]=250;
+    current_node.graphicAttribute["width"]=100;
+    current_node.graphicAttribute["height"]=100;
+
+    current_node=a.add_node('Object_rectangle_1_1 (depth: 1)', 'Object_circle_2_1 (depth: 2)');
+    current_node.graphicAttribute["depth"]=2;
+    current_node.graphicAttribute["x"]=755;
+    current_node.graphicAttribute["y"]=330;
+    current_node.graphicAttribute["width"]=240;
+    current_node.graphicAttribute["height"]=240;
+
+    current_node=a.add_node('Object_circle_2_1 (depth: 2)','Object_triangle_3_1 (depth: 3)');
+    current_node.graphicAttribute["depth"]=3;
+    current_node.graphicAttribute["x"]=815;
+    current_node.graphicAttribute["y"]=390;
+    current_node.graphicAttribute["width"]=60;
+    current_node.graphicAttribute["height"]=60;
+
+    current_node=a.add_node('Object_circle_2_1 (depth: 2)','Object_triangle_3_2 (depth: 3)');
+    current_node.graphicAttribute["depth"]=3;
+    current_node.graphicAttribute["x"]=875;
+    current_node.graphicAttribute["y"]=450;
+    current_node.graphicAttribute["width"]=60;
+    current_node.graphicAttribute["height"]=60;
+
+    current_node=a.add_node('Object_circle_2_1 (depth: 2)', 'Object_rectangle_3_1 (depth: 3)');
+    current_node.graphicAttribute["depth"]=3;
+    current_node.graphicAttribute["x"]=300;
+    current_node.graphicAttribute["y"]=500;
+    current_node.graphicAttribute["width"]=500;
+    current_node.graphicAttribute["height"]=400;
+
+    current_node=a.add_node('Object_rectangle_3_1 (depth: 3)', 'Object_circle_4_1 (depth: 4)');
+    current_node.graphicAttribute["depth"]=4;
+    current_node.graphicAttribute["x"]=400;
+    current_node.graphicAttribute["y"]=550;
+    current_node.graphicAttribute["width"]=300;
+    current_node.graphicAttribute["height"]=300;
+
+    // Structure stack for GUI 
+    levelorderTraversing(a.rootNode);
+
+  </script>
+</body>
+</html>
